@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: doaabelal/backend
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: app-configmap
+                  key: host
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: app-configmap
+                  key: user
+            - name: MYSQL_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: app-configmap
+                  key: database
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: password

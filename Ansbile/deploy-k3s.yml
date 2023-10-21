@@ -1,0 +1,12 @@
+- hosts: k3s-cluster
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Install k3s master
+      shell: curl -sfL https://get.k3s.io | sh -
+      when: inventory_hostname in groups['master']
+
+    - name: Join node to k3s cluster
+      shell: curl -sfL http://{{ hostvars['master']['ansible_host'] }}:6443/get-kubeconfig | sh -
+      when: inventory_hostname in groups['node']
